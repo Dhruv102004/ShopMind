@@ -3,6 +3,24 @@ import { ApiError } from "../utils/ApiError.js"
 import { User } from "../models/user.model.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 
+const options = {
+    httpOnly: true,
+    secure: true
+}
+
+const generateAccessAndRefreshToken = async function(user){
+    try{
+        const accessToken = user.generateAccessToken();
+        const refreshToken = user.generateRefreshToken(); 
+
+        user.refreshToken = refreshToken
+        // while saving there should be password also(check the user model), all those check properties also kick in
+        await user.save({ validateBeforeSave: false} )
+        return {accessToken, refreshToken}
+    } catch {
+        throw new ApiError(500, "Something went wrong while generating refresh and access token")
+    }
+}
 
 const registerUser = asyncHandler(async (req, res) => {
     const { email, fullName, password, isSeller } = req.body
@@ -45,4 +63,41 @@ const registerUser = asyncHandler(async (req, res) => {
     })
 })
 
-export { registerUser }
+const loginUser = asyncHandler( async (req, res) => {
+    const {email, password} = req.body
+    if(!password || !email) {
+        throw new ApiError(400, "email and password are required")
+    }
+
+    const user = await User.findOne({email})
+    if(!user){
+        throw new ApiError(404, "User does not exist")
+    }
+
+    const isPasswordValid = await user.isPasswordCorrect(password)
+    if(!isPasswordValid){
+        throw new ApiError(401, "Invalid user credentials")
+    }
+
+    const {accessToken, refreshToken} = await generateAccessAndRefreshToken(user)
+    
+    const loggedInUser = await User.findById(user._id).select("-password -refreshToken")
+
+    return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json({
+        success: true,
+        message: "User logged in successfully",
+        user: loggedInUser,
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+    })
+
+})
+
+export { 
+    registerUser,
+    loginUser 
+}

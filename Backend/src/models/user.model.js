@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
 
         isSeller: {
             type: Boolean,
-            required: true
+            default: false,
         },
 
         refreshToken: {

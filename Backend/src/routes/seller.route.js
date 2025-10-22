@@ -22,7 +22,7 @@ router.route("/add-product").post(verifyJWT,
     ),
     addProduct
 )
-router.route("/update-product/:productId").post(verifyJWT, updateProduct)
-router.route("/delete-product/:id").post(verifyJWT, deleteProduct)
+router.route("/update-product/:productId").put(verifyJWT, updateProduct)
+router.route("/delete-product/:productId").delete(verifyJWT, deleteProduct)
 
 export default router

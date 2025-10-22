@@ -39,14 +39,18 @@ const addProduct = asyncHandler(async(req, res) => {
 })
 
 const getProducts = asyncHandler(async(req, res) => {
-    const products = await Product.find({owner: req.user._id})
-    console.log(products)
+    const page =  parseInt(req.query.page || "1", 10)
+    const skip = (page - 1)*10
+    const totalProducts = await Product.countDocuments({owner: req.user._id})
+    const totalPages = Math.max(1, Math.ceil(totalProducts / 10))
+    const products = await Product.find({owner: req.user._id}).skip(skip).limit(10).lean();
     return res
     .status(200)
     .json({
         success: true,
         message: "List of all products listed by owner",
-        products: products
+        products: products,
+        totalPages: totalPages
     })
 })
 

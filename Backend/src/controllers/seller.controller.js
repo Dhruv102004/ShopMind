@@ -1,7 +1,7 @@
 import { ApiError } from "../utils/ApiError.js"
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Product } from "../models/product.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js"
+import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
 
 const addProduct = asyncHandler(async(req, res) => {
     const { name, description, price, quantity } = req.body
@@ -107,6 +107,16 @@ const deleteProduct = asyncHandler(async (req, res) => {
     const { productId } = req.params;
     if (!productId) {
         throw new ApiError(400, "Product ID is required");
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product is not present in database")
+    }
+
+    const deleteImage = await deleteFromCloudinary(product.image)
+    if (!deleteImage) {
+        throw new ApiError(500, "Unable to locate image in cloudinary")
     }
 
     const deletedProduct = await Product.findByIdAndDelete(productId);

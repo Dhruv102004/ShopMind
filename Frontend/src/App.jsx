@@ -1,16 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Outlet,
+  Navigate,
+  Link,
+} from "react-router-dom";
+
+import Login from './pages/Login'
+import Register from "./pages/Register";
+import UsersHome from "./pages/users/UsersHome";
+
+
+
+const appRouter = createBrowserRouter([
+  { path: "/login", element: <Login /> },
+  { path: "/register", element: <Register /> },
+  { path: "/users/home", element: <UsersHome /> },
+]);
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <h1 className='text-violet-500'>Hello World</h1>
-    </>
-  )
+  return <RouterProvider router={appRouter} />;
+  
 }
 
 export default App

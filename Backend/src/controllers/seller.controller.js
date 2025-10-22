@@ -8,6 +8,10 @@ const addProduct = asyncHandler(async(req, res) => {
     if (!name?.trim() || !description?.trim() || !price || !quantity) {
         throw new ApiError(400, "Please fill the required fields")
     }
+
+    if(price<=0 || quantity<=0){
+        throw new ApiError(400, "Price and Quantity has to be greater than 0")
+    }
     
     const imageLocalPath = req.files?.image[0]?.path
     if (!imageLocalPath) {
@@ -54,7 +58,75 @@ const getProducts = asyncHandler(async(req, res) => {
     })
 })
 
+const updateProduct = asyncHandler(async(req, res) => {
+    const {name , description, price , quantity} = req.body
+    const {productId} = req.params
+    if (!productId) {
+        throw new ApiError(400, "Product ID is required")
+    }
+    if (!name?.trim() || !description?.trim() || price == null || quantity == null) {
+        throw new ApiError(400, "Please fill the required fields")
+    }
+
+    if (price<=0) {
+        throw new ApiError(400, "Price has to be greater than 0")
+    }
+
+    if (quantity<0) {
+        throw new ApiError(400, "Quantity cannot be negative")
+    }
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+        productId,
+        {
+            name: name,
+            description: description,
+            price: price,
+            quantity: quantity
+        },
+        {
+            new: true,
+            runValidators: true
+        }
+    );
+    if (!updatedProduct) {
+        throw new ApiError(404, "Product not found");
+    }
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Product updated successfully",
+        updatedProduct: updatedProduct
+    })
+
+})
+
+const deleteProduct = asyncHandler(async (req, res) => {
+    const { productId } = req.params;
+    if (!productId) {
+        throw new ApiError(400, "Product ID is required");
+    }
+
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+    if (!deletedProduct) {
+        throw new ApiError(404, "Product not found");
+    }
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Product deleted successfully",
+        deletedProduct: deletedProduct,
+    });
+});
+
+
 export {
     getProducts,
-    addProduct
+    addProduct,
+    updateProduct,
+    deleteProduct
 }

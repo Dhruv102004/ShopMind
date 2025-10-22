@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { ClipboardCopy, Edit3 } from "lucide-react";
+import { Trash2, Edit3 } from "lucide-react";
 import Loader from "../../components/Loader";
 import SellerNavbar from "../../components/SellerNavbar";
 import axios from "axios";
@@ -20,6 +20,7 @@ export default function SellerProducts() {
 
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
+  const [deleteProduct, setDeleteProduct] = useState(null);
 
   const getProducts = async () => {
     setLoading(true);
@@ -56,8 +57,7 @@ export default function SellerProducts() {
       formDataToSend.append("image", img);
     });
     */
-    
-    
+
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_API_URL}/seller/add-product`,
@@ -110,7 +110,6 @@ export default function SellerProducts() {
     }));
   };
 
-
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditProduct((prev) => ({ ...prev, [name]: value }));
@@ -120,8 +119,19 @@ export default function SellerProducts() {
     e.preventDefault();
     setLoading(true);
     try {
-      console.log("Edit this product");
-      
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/seller/update-product/${
+          editProduct._id
+        }`,
+        editProduct,
+        {
+          withCredentials: true, // allow backend to set cookies
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+      getProducts();
       setEditProduct(null);
     } catch (err) {
       console.error("Error editing product:", err);
@@ -130,11 +140,29 @@ export default function SellerProducts() {
     }
   };
 
+  const handleDelete = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.delete(
+        `${import.meta.env.VITE_API_URL}/seller/delete-product/${
+          deleteProduct._id
+        }`,
+        {
+          withCredentials: true,
+        }
+      );
+      getProducts();
+      setDeleteProduct(null);
+    } catch (err) {
+      console.error("Error deleting product:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     getProducts();
   }, [page]);
-
 
   return (
     <>
@@ -189,8 +217,10 @@ export default function SellerProducts() {
                       >
                         {/* Product ID + Copy Button */}
                         <td className="px-6 py-4 flex items-center space-x-2">
-                          <img 
-                            src={product.image || "https://via.placeholder.com/100"}
+                          <img
+                            src={
+                              product.image || "https://via.placeholder.com/100"
+                            }
                             alt={product.name}
                             className="w-16 h-16 object-cover rounded-lg"
                           />
@@ -202,14 +232,23 @@ export default function SellerProducts() {
                         </td>
                         <td className="px-6 py-4">₹{product.price}</td>
                         <td className="px-6 py-4">{product.quantity}</td>
-                        <td className="px-6 py-4"><p>Purchased: {product.purchasedBy.length}</p> <p>Views: {product.viewedBy.length}</p></td>
+                        <td className="px-6 py-4">
+                          <p>Purchased: {product.purchasedBy.length}</p>{" "}
+                          <p>Views: {product.viewedBy.length}</p>
+                        </td>
 
                         <td className="px-6 py-4 text-center">
                           <button
                             onClick={() => setEditProduct(product)}
-                            className="inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-sm transition"
+                            className="m-1 inline-flex items-center bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-lg text-sm transition"
                           >
                             <Edit3 size={16} className="mr-1" /> Edit
+                          </button>
+                          <button
+                            onClick={() => setDeleteProduct(product)}
+                            className="m-1 inline-flex items-center bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-lg text-sm transition"
+                          >
+                            <Trash2 size={16} className="mr-1" /> Delete
                           </button>
                         </td>
                       </tr>
@@ -456,6 +495,46 @@ export default function SellerProducts() {
                     </button>
                   </div>
                 </form>
+              </div>
+            </div>
+          )}
+
+          {/* Delete Product Modal */}
+          {deleteProduct && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50">
+              <div className="bg-gray-900 border border-gray-700 rounded-2xl shadow-2xl p-6 w-full max-w-lg relative">
+                <h3 className="text-xl font-semibold text-white mb-4">
+                  Confirm Delete Product
+                </h3>
+                <div>
+                  <label className="block text-sm text-gray-300 mb-1">
+                    Product Name
+                  </label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={deleteProduct.name}
+                    onChange={handleChange}
+                    className="cursor-not-allowed w-full px-4 py-2 bg-gray-800 text-gray-200 rounded-lg border border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none"
+                    required
+                    disabled
+                  />
+                </div>
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setDeleteProduct(null)}
+                    className="px-4 py-2 bg-gray-700 text-gray-200 rounded-lg hover:bg-gray-600 transition"
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={() => handleDelete()}
+                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition"
+                  >
+                    Confirm Delete
+                  </button>
+                </div>
               </div>
             </div>
           )}

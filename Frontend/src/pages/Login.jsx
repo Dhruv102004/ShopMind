@@ -32,7 +32,7 @@ export default function Login() {
       });
 
       console.log("Login successful:", response.data);
-      navigate("/users/home");
+      navigate("/seller/home");
     } catch (err) {
       console.log("Login error:", err);
       setError(
@@ -49,7 +49,7 @@ export default function Login() {
      {loading ? (
       <Loader />
      ):(
-      <div className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+      <div className="min-h-screen w-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
         <div className="w-full max-w-sm backdrop-blur-lg bg-gray-800/40 border border-gray-700/60 shadow-2xl rounded-2xl p-8">
           <h2 className="text-3xl font-semibold text-center text-white drop-shadow-md mb-6">
             Login

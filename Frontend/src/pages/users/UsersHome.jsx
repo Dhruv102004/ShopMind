@@ -1,7 +1,23 @@
-function UsersHome() {
+import { useState } from "react"
+import Loader from "../../components/Loader"
+import UsersNavbar from "../../components/UsersNavbar";
+
+
+export default function UsersHome() {
+  const [loading, setLoading] = useState(false);
+
+
   return (
-    <div>UsersHome</div>
+    <>
+      {loading ? (
+        <Loader />
+      ): (
+        <>
+          <UsersNavbar />
+          <div>User's Home</div>
+        </>
+      )}
+    </>
   )
 }
 
-export default UsersHome

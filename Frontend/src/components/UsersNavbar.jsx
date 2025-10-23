@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader";
 import axios from "axios";
 
-export default function SellerNavbar() {
+export default function UsersNavbar() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();

@@ -6,12 +6,15 @@ const productSchema = new mongoose.Schema(
             type: String,
             required: true,
             trim: true,
+            lowercase: true,
+            index: true
         },
 
         description: {
             type: String,
             required: true,
             trim: true,
+            lowercase: true,
         },
 
         tags: {

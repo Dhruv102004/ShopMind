@@ -3,6 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { Product } from "../models/product.model.js";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js"
 
+const PAGE_SIZE = 10;
+
 const addProduct = asyncHandler(async(req, res) => {
     const { name, description, price, quantity } = req.body
     if (!name?.trim() || !description?.trim() || !price || !quantity) {
@@ -43,11 +45,11 @@ const addProduct = asyncHandler(async(req, res) => {
 })
 
 const getProducts = asyncHandler(async(req, res) => {
-    const page =  parseInt(req.query.page || "1", 10)
-    const skip = (page - 1)*10
+    const page =  parseInt(req.query.page || "1", PAGE_SIZE)
+    const skip = (page - 1)*PAGE_SIZE
     const totalProducts = await Product.countDocuments({owner: req.user._id})
-    const totalPages = Math.max(1, Math.ceil(totalProducts / 10))
-    const products = await Product.find({owner: req.user._id}).skip(skip).limit(10).lean();
+    const totalPages = Math.max(1, Math.ceil(totalProducts / PAGE_SIZE))
+    const products = await Product.find({owner: req.user._id}).skip(skip).limit(PAGE_SIZE).lean();
     return res
     .status(200)
     .json({
@@ -133,10 +135,43 @@ const deleteProduct = asyncHandler(async (req, res) => {
     });
 });
 
+const searchProducts = asyncHandler(async (req, res) => {
+    const productName = req.query.name?.trim();
+
+    if (!productName) {
+        return getProducts(req, res);
+    }
+
+    const page = parseInt(req.query.page || "1", PAGE_SIZE);
+    const skip = (page - 1) * PAGE_SIZE;
+
+    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const nameRegex = new RegExp('^' + escapeRegex(productName), 'i');
+
+    const filter = {
+        owner: req.user._id, 
+        name: nameRegex
+    };
+
+    const totalProducts = await Product.countDocuments(filter);
+    const totalPages = Math.max(1, Math.ceil(totalProducts / PAGE_SIZE));
+    const products = await Product.find(filter)
+        .skip(skip)
+        .limit(PAGE_SIZE)
+        .lean();
+
+    return res.status(200).json({
+        success: true,
+        message: `Products starting with "${productName}" for owner`,
+        products: products,
+        totalPages: totalPages
+    });
+});
 
 export {
     getProducts,
     addProduct,
     updateProduct,
-    deleteProduct
+    deleteProduct,
+    searchProducts
 }

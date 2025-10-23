@@ -72,8 +72,18 @@ const getProductsByCategories = asyncHandler(async(req, res) => {
         })    
 })
 
+const getCategories = asyncHandler(async(_, res) => {
+    const categories = Product.schema.path("category").enumValues;
+    res.status(200).json({
+        success: true,
+        message: "List of all available categories",
+        categories: categories
+    });
+})
+
 export {
     getRecommendedProducts,
     searchProducts,
-    getProductsByCategories
+    getProductsByCategories,
+    getCategories
 }

@@ -13,6 +13,7 @@ export default function SellerProducts() {
     price: "",
     quantity: "",
     image: [],
+    category: "",
   });
 
   const [page, setPage] = useState(1);
@@ -20,6 +21,7 @@ export default function SellerProducts() {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
   const [deleteProduct, setDeleteProduct] = useState(null);
 
@@ -27,10 +29,10 @@ export default function SellerProducts() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/seller/get-products`,{serach: searchQuery, page},
+        `${import.meta.env.VITE_API_URL}/seller/get-products`,
         {
           withCredentials: true,
-        },
+        }
       );
 
       setProducts(res.data.products);
@@ -39,6 +41,38 @@ export default function SellerProducts() {
       console.error("Error fetching products:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getCategories = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/seller/get-categories`,
+        { withCredentials: true }
+      );
+      console.log(res.data);
+
+      setCategories(res.data.categories);
+    } catch (err) {
+      console.error("Error fetching categories:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = async () => {
+    try {
+      const res = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/seller/search-products?name=${searchQuery}`,
+        {
+          withCredentials: true,
+        }
+      );
+    } catch (err) {
+      console.error("Error searching products:", err);
     }
   };
 
@@ -51,6 +85,7 @@ export default function SellerProducts() {
     formDataToSend.append("price", formData.price);
     formDataToSend.append("quantity", formData.quantity);
     formDataToSend.append("image", formData.image[0]);
+    formDataToSend.append("category", formData.category);
 
     // Append all photos
     /* 
@@ -77,6 +112,7 @@ export default function SellerProducts() {
         price: "",
         quantity: "",
         image: [],
+        category: "",
       });
       setOpen(false);
     } catch (err) {
@@ -163,7 +199,12 @@ export default function SellerProducts() {
 
   useEffect(() => {
     getProducts();
+    getCategories();
   }, [page]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [searchQuery]);
 
   return (
     <>
@@ -179,7 +220,7 @@ export default function SellerProducts() {
               <h2 className="text-2xl font-semibold text-white">
                 Your Products
               </h2>
-        
+
               {/* Center: Search bar */}
               <div className="flex-1 flex justify-center">
                 <input
@@ -400,6 +441,42 @@ export default function SellerProducts() {
                       </>
                     )}
                   </div>
+                  <div>
+                    <label className="block text-sm text-gray-300 mb-1">
+                      Category
+                    </label>
+                    <select
+                      name="category"
+                      value={formData.category}
+                      onChange={handleChange}
+                      className="w-full px-4 py-2 bg-gray-800 text-gray-200 rounded-lg border border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none"
+                      required
+                    >
+                      <option value="">Select Category</option>
+                      {categories.map((cat, index) => (
+                        <option key={index} value={cat}>
+                          {cat[0].toUpperCase() + cat.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+{/* 
+                  {formData.category === "other" && (
+                    <div>
+                      <label className="block text-sm text-gray-300 mb-1">
+                        Other Category
+                      </label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 bg-gray-800 text-gray-200 rounded-lg border border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none"
+                        required
+                      />
+                    </div>
+                  )} 
+*/}
 
                   <div className="flex justify-end gap-3 mt-6">
                     <button

@@ -54,7 +54,7 @@ export default function Register() {
         {loading ? (
             <Loader/>
         ) : (  
-            <div className="min-h-screen w-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+            <div className="min-h-screen w-screen flex items-center justify-center bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
             <div className="w-full max-w-md backdrop-blur-lg bg-gray-800/40 border border-gray-700/60 shadow-2xl rounded-2xl p-8">
                 {/* Animated Toggle */}
                 <div className="relative flex bg-gray-700/40 rounded-full p-2 mb-6 w-64 mx-auto cursor-pointer">

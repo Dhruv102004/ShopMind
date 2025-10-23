@@ -20,6 +20,7 @@ const appRouter = createBrowserRouter([
   { path: "/users/home", element: <UsersHome /> },
   { path: "/seller/home", element: <SellerHome /> },
   { path: "/seller/products", element: <SellerProducts /> },
+  { index: true, path: "/", element: <Navigate to="/login" /> },
 ]);
 
 

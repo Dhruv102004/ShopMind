@@ -58,8 +58,25 @@ const productSchema = new mongoose.Schema(
         image: {
             type: String,
             required: true
-        }
+        },
 
+        category: {
+            type: String,
+            required: true,
+            trim: true,
+            lowercase: true,
+            enum: [
+                "electronics",
+                "fashion",
+                "home",
+                "beauty",
+                "sports",
+                "books",
+                "toys",
+                "other"
+            ],
+            index: true
+        }
     },
     {
         timestamps: true

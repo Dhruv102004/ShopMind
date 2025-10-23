@@ -6,8 +6,8 @@ import { uploadOnCloudinary, deleteFromCloudinary } from "../utils/cloudinary.js
 const PAGE_SIZE = 10;
 
 const addProduct = asyncHandler(async(req, res) => {
-    const { name, description, price, quantity } = req.body
-    if (!name?.trim() || !description?.trim() || !price || !quantity) {
+    const { name, description, price, quantity, category } = req.body
+    if (!name?.trim() || !description?.trim() || !price || !quantity || !category) {
         throw new ApiError(400, "Please fill the required fields")
     }
 
@@ -31,6 +31,7 @@ const addProduct = asyncHandler(async(req, res) => {
         description: description,
         price: price,
         quantity: quantity,
+        category: category,
         image: image.url,
         owner: req.user._id
     })

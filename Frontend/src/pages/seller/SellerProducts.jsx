@@ -17,6 +17,7 @@ export default function SellerProducts() {
 
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [products, setProducts] = useState([]);
   const [editProduct, setEditProduct] = useState(null);
@@ -26,10 +27,10 @@ export default function SellerProducts() {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/seller/get-products`,
+        `${import.meta.env.VITE_API_URL}/seller/get-products`,{serach: searchQuery, page},
         {
           withCredentials: true,
-        }
+        },
       );
 
       setProducts(res.data.products);
@@ -119,7 +120,7 @@ export default function SellerProducts() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post(
+      const res = await axios.put(
         `${import.meta.env.VITE_API_URL}/seller/update-product/${
           editProduct._id
         }`,
@@ -178,6 +179,17 @@ export default function SellerProducts() {
               <h2 className="text-2xl font-semibold text-white">
                 Your Products
               </h2>
+        
+              {/* Center: Search bar */}
+              <div className="flex-1 flex justify-center">
+                <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="w-1/2 px-4 py-2 bg-gray-800 text-gray-200 rounded-lg border border-gray-700 focus:ring-2 focus:ring-indigo-500 outline-none"
+                  onChange={(e) => setSearchQuery(e.target.value)} // optional handler
+                />
+              </div>
+
               <button
                 onClick={() => setOpen(true)}
                 className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg shadow-md transition"

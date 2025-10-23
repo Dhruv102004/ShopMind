@@ -8,7 +8,9 @@ import {
 
 import Login from './pages/Login'
 import Register from "./pages/Register";
-import UsersHome from "./pages/users/UsersHome";
+import BuyerHome from "./pages/buyer/BuyerHome";
+import BuyerProduct from "./pages/buyer/BuyerProduct";
+import BuyerSearchResults from "./pages/buyer/BuyerSearchResults";
 import SellerHome from "./pages/seller/SellerHome";
 import SellerProducts from "./pages/seller/SellerProducts";
 
@@ -17,7 +19,9 @@ import SellerProducts from "./pages/seller/SellerProducts";
 const appRouter = createBrowserRouter([
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
-  { path: "/users/home", element: <UsersHome /> },
+  { path: "/buyer/home", element: <BuyerHome /> },
+  { path: "/buyer/search-results", element:<BuyerSearchResults /> },
+  { path: "/buyer/products/:id", element: <BuyerProduct /> },
   { path: "/seller/home", element: <SellerHome /> },
   { path: "/seller/products", element: <SellerProducts /> },
   { index: true, path: "/", element: <Navigate to="/login" /> },

@@ -46,7 +46,7 @@ const addProduct = asyncHandler(async(req, res) => {
 })
 
 const getProducts = asyncHandler(async(req, res) => {
-    const page =  parseInt(req.query.page || "1", PAGE_SIZE)
+    const page =  parseInt(req.query.page || "1", 10)
     const skip = (page - 1)*PAGE_SIZE
     const totalProducts = await Product.countDocuments({owner: req.user._id})
     const totalPages = Math.max(1, Math.ceil(totalProducts / PAGE_SIZE))
@@ -143,7 +143,7 @@ const searchProducts = asyncHandler(async (req, res) => {
         return getProducts(req, res);
     }
 
-    const page = parseInt(req.query.page || "1", PAGE_SIZE);
+    const page = parseInt(req.query.page || "1", 10);
     const skip = (page - 1) * PAGE_SIZE;
 
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');

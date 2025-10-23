@@ -6,7 +6,8 @@ import {
     getProducts,
     updateProduct,
     deleteProduct,
-    searchProducts
+    searchProducts,
+    getCategories
 } from "../controllers/seller.controller.js"
 
 const router = Router();
@@ -26,5 +27,6 @@ router.route("/add-product").post(verifyJWT,
 router.route("/update-product/:productId").put(verifyJWT, updateProduct)
 router.route("/delete-product/:productId").delete(verifyJWT, deleteProduct)
 router.route("/search-products").get(verifyJWT, searchProducts)
+router.route("/get-categories").get(verifyJWT, getCategories)
 
 export default router

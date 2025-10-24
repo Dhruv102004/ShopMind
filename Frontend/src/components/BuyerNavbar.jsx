@@ -57,6 +57,7 @@ export default function BuyerNavbar() {
         {},
         { withCredentials: true }
       );
+      localStorage.clear();
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);

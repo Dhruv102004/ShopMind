@@ -32,6 +32,9 @@ export default function Login() {
       });
 
       console.log("Login successful:", response.data);
+      localStorage.setItem("isSeller", response?.data?.user?.isSeller);
+      localStorage.setItem("fullName", response?.data?.user?.fullName);
+      localStorage.setItem("_id", response?.data?.user?._id);
       navigate("/seller/home");
     } catch (err) {
       console.log("Login error:", err);

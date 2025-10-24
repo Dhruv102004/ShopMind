@@ -19,6 +19,7 @@ export default function SellerNavbar() {
           withCredentials: true,
         }
       );
+      localStorage.clear();
       navigate("/login");
     } catch (err) {
       console.error("Logout failed:", err);

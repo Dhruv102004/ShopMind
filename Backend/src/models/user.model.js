@@ -34,6 +34,11 @@ const userSchema = new mongoose.Schema(
 
         refreshToken: {
             type: String,
+        },
+
+        cart: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Cart"
         }
     },
     {

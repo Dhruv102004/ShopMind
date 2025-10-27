@@ -7,7 +7,7 @@ import { ShoppingCart } from "lucide-react";
 export default function BuyerNavbar() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [cartCount, setCartCount] = useState(3);
+  const [cartCount, setCartCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchedProducts, setSearchedProducts] = useState([]);
   const navigate = useNavigate();
@@ -35,6 +35,19 @@ export default function BuyerNavbar() {
       setSearchedProducts([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const getCartCount = async () => {
+    try {
+      const res = await axios.get(
+        `${import.meta.env.VITE_API_URL}/cart/get-items`,
+        { withCredentials: true }
+      );
+      setCartCount(res.data.totalItems || 0);
+    } catch (err) {
+      console.error("Error fetching cart count:", err);
+      setCartCount(0);
     }
   };
 
@@ -196,11 +209,10 @@ export default function BuyerNavbar() {
           className="relative p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition"
         >
           <ShoppingCart className="w-6 h-6 text-white" />
-          {cartCount > 0 && (
-            <span className="absolute -top-1 -right-1 bg-red-500 text-xs text-white font-semibold rounded-full px-1.5 py-0.5">
-              {cartCount}
-            </span>
-          )}
+
+          <span className="absolute -top-1 -right-1 bg-red-500 text-xs text-white font-semibold rounded-full px-1.5 py-0.5">
+            {cartCount}
+          </span>
         </button>
 
         {/* Avatar + Dropdown */}

@@ -110,7 +110,7 @@ function BuyerCart() {
                 {/* Product Info */}
                 <div className="flex items-center space-x-4">
                   <img
-                    src={item.picture}
+                    src={item.image}
                     alt={item.name}
                     className="w-16 h-16 object-cover rounded-xl border border-gray-600 shadow-sm"
                   />

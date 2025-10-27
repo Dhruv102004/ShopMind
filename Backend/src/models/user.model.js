@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
+import { Cart } from "./cart.model.js";
 
 // the user will contain full name, email, password, refresh token, is seller
 const userSchema = new mongoose.Schema(
@@ -49,6 +50,15 @@ const userSchema = new mongoose.Schema(
 userSchema.pre("save", async function (next) {
     if(!this.isModified("password")) return next();
     this.password = await bcrypt.hash(this.password, 10)
+    
+    if (this.isNew && !this.cart) {
+        try {
+            const cart = await Cart.create({ owner: this._id });
+            this.cart = cart._id;
+        } catch (err) {
+            return next(err);
+        }
+    }
     next()
 })
 

@@ -1,10 +1,10 @@
 import mongoose from "mongoose"
 import { ApiError } from "../utils/ApiError.js";
 
-const cartProductSchema = new Schema(
+const cartProductSchema = new mongoose.Schema(
   {
     product: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
       required: true,
     },
@@ -18,10 +18,10 @@ const cartProductSchema = new Schema(
   { _id: false }
 );
 
-const cartSchema = new Schema(
+const cartSchema = new mongoose.Schema(
   {
     owner: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
       index: true,
@@ -69,4 +69,4 @@ cartSchema.methods.setQuantity = async function (productId, qty) {
 };
 
 
-export const cart = mongoose.model("Cart", cartSchema)
+export const Cart = mongoose.model("Cart", cartSchema)

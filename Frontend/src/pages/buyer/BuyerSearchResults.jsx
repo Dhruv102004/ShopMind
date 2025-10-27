@@ -13,6 +13,27 @@ export default function BuyerSearchResults() {
   const [maxPage, setMaxPage] = useState(1);
   const navigate = useNavigate();
 
+  const handleAddToCart = async (productId) => {
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/cart/add-item/${productId}`,
+        null,
+        {
+          params: { quantity: 1 }, 
+          withCredentials: true,
+        }
+      );
+      console.log(res);
+      alert("Product added to cart!");
+    } catch (err) {
+      console.error("Error adding to cart:", err);
+      alert("Failed to add product to cart.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const fetchResults = async () => {
       try {
@@ -47,24 +68,52 @@ export default function BuyerSearchResults() {
           {products.length === 0 ? (
             <p>No products found.</p>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {products.map((product) => (
-                <div
-                  key={product._id}
-                  className="hover:scale-105 hover:shadow-gray-700 bg-gray-800 rounded-lg shadow-md p-4 cursor-pointer hover:shadow-xl transition"
-                  onClick={() => navigate(`/buyer/products/${product._id}`)}
-                >
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-48 object-cover rounded mb-4 border border-gray-700"
-                  />
-                  <h2 className="text-lg font-semibold mb-2">{product.name}</h2>
-                  <p className="text-indigo-400 font-bold text-xl">
-                    ₹{product.price}
-                  </p>
-                </div>
-              ))}
+            <div className="px-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              {products.length > 0 ? (
+                products.map((product) => (
+                  <div
+                    key={product._id}
+                    className="bg-gray-800/40 border border-gray-700/60 rounded-lg shadow-md overflow-hidden hover:scale-105 hover:shadow-gray-700 transition transform duration-200"
+                  >
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="w-full h-48 object-cover cursor-pointer"
+                      onClick={() => navigate(`/buyer/products/${product._id}`)}
+                    />
+                    <div className="p-4 flex flex-col">
+                      <h3 className="text-lg text-white font-semibold mb-2 truncate">
+                        {product.name}
+                      </h3>
+                      <p className="text-white mb-4">
+                        ₹{product.price.toFixed(2)} |{" "}
+                        {product.category[0].toUpperCase() +
+                          product.category.slice(1)}
+                      </p>
+
+                      {/* Action Buttons */}
+                      <div className="flex justify-between items-center mt-auto">
+                        <button
+                          onClick={() => handleAddToCart(product._id)}
+                          className="bg-yellow-700 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+                        >
+                          Add to Cart
+                        </button>
+                        <button
+                          onClick={() => handleBuyNow(product._id)}
+                          className="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-2 rounded-lg text-sm font-medium transition"
+                        >
+                          Buy Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center text-gray-400 col-span-full">
+                  No products found.
+                </p>
+              )}
             </div>
           )}
           <div className="my-6 flex items-center justify-center">

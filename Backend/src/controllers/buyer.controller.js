@@ -20,6 +20,26 @@ const getRecommendedProducts = asyncHandler(async(req, res) => {
     }) 
 })
 
+const getProduct = asyncHandler(async(req, res) => {
+    const {productId} = req.params
+    if (!productId) {
+        throw new ApiError(400, "Product ID is not valid")
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product not found")
+    }
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Successfully retrieved product",
+        product: product
+    })
+})
+
 const searchProducts = asyncHandler(async (req, res) => {
     const productName = req.query.name?.trim();
 
@@ -83,6 +103,7 @@ const getCategories = asyncHandler(async(_, res) => {
 
 export {
     getRecommendedProducts,
+    getProduct,
     searchProducts,
     getProductsByCategories,
     getCategories

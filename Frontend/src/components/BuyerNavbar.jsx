@@ -192,7 +192,7 @@ export default function BuyerNavbar() {
       <div className="flex items-center space-x-4" ref={dropdownRef}>
         {/* Cart Button */}
         <button
-          onClick={() => navigate("../buyer/cart")}
+          onClick={() => navigate("/buyer/cart")}
           className="relative p-2 rounded-full bg-gray-700 hover:bg-gray-600 transition"
         >
           <ShoppingCart className="w-6 h-6 text-white" />

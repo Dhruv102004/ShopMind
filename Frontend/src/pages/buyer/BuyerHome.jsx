@@ -8,29 +8,22 @@ export default function BuyerHome() {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
-  const [categories, setCategories] = useState([
-    "electronics",
-    "fashion",
-    "home",
-    "beauty",
-    "sports",
-    "books",
-    "toys",
-    "other",
-  ]);
+  const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [page, setPage] = useState(1);
   const [maxPage, setMaxPage] = useState(1);
 
-  /* 
+  
   const getCategories = async () => {
     setLoading(true);
     try {
       const res = await axios.get(
-        `${import.meta.env.VITE_API_URL}/users/get-categories`,
+        `${import.meta.env.VITE_API_URL}/buyer/get-categories`,
         { withCredentials: true }
       );
+      console.log(res.data);
+      
       setCategories(res.data.categories);
     }
     catch (err) {
@@ -40,7 +33,7 @@ export default function BuyerHome() {
       setLoading(false);
     }
   };
- */
+ 
   const getProducts = async () => {
     setLoading(true);
     if (selectedCategory) {
@@ -80,10 +73,9 @@ export default function BuyerHome() {
     getProducts();
   }, [page, selectedCategory]);
   
-  /* 
   useEffect(()=>{
-    //getCategories();
-  }, []) */
+    getCategories();
+  }, []) 
 
   return (
     <>

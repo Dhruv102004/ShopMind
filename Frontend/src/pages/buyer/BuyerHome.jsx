@@ -21,8 +21,6 @@ export default function BuyerHome() {
         `${import.meta.env.VITE_API_URL}/buyer/get-categories`,
         { withCredentials: true }
       );
-      console.log(res.data);
-
       setCategories(res.data.categories);
     } catch (err) {
       console.error("Error fetching categories:", err);
@@ -41,8 +39,6 @@ export default function BuyerHome() {
           }/buyer/get-product-by-categories?category=${selectedCategory}&page=${page}`,
           { withCredentials: true }
         );
-        console.log(res.data);
-
         setProducts(res.data.products);
         setMaxPage(res.data.totalPages || 1);
       } catch (err) {
@@ -58,8 +54,6 @@ export default function BuyerHome() {
           }/buyer/get-recommended-products?page=${page}`,
           { withCredentials: true }
         );
-        console.log(res.data);
-
         setProducts(res.data.products);
         setMaxPage(res.data.totalPages || 1);
       } catch (err) {
@@ -81,7 +75,6 @@ export default function BuyerHome() {
           withCredentials: true,
         }
       );
-      console.log(res);
       alert("Product added to cart!");
     } catch (err) {
       console.error("Error adding to cart:", err);

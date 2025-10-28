@@ -95,6 +95,10 @@ export default function BuyerNavbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  useEffect(()=>{
+    getCartCount();
+  }, [])
+
   return (
     <nav className="w-full bg-gray-900/80 backdrop-blur-lg border-b border-gray-700 px-6 py-3 flex items-center justify-between shadow-md">
       {/* 🌐 Logo + Links */}

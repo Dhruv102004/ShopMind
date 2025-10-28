@@ -101,10 +101,148 @@ const getCategories = asyncHandler(async(_, res) => {
     });
 })
 
+const getComments = asyncHandler(async(req, res) => {
+    const { productId } = req.params
+    if (!productId) {
+        throw new ApiError(400, "Send valid product ID")
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product not present")
+    }
+
+    const comments = product.review
+    .filter( productReview => productReview.comment !== "" )
+    .map( productReview => productReview.comment )
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Successfully retrieved comments",
+        comments: comments,
+        totalComments: comments.length
+    })
+
+})
+
+const getRating = asyncHandler(async(req, res) => {
+    const { productId } = req.params
+    if (!productId) {
+        throw new ApiError(400, "Send valid product ID")
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product not present")
+    }
+
+    if (!product.review?.length) {
+        return res
+        .status(200)
+        .json({
+            success: true,
+            message: "No reviews present for the product",
+            averageRating: 0,
+            totalReviews: 0
+        })
+    }
+
+    const rating = product.review
+    .map( productReview => productReview.rating )
+
+    const averageRating = rating.reduce((sum, rating) => sum + rating, 0)/(rating.length)
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Average rating of the product",
+        averageRating: averageRating,
+        totalReviews: rating.length
+    })
+
+})
+
+const addRating = asyncHandler(async(req, res) => {
+    const { productId } = req.params
+    const { rating } = req.body
+    if (!productId) {
+        throw new ApiError(400, "Send valid product ID")
+    }
+    if (!rating || rating > 5) {
+        throw new ApiError(400, "Rating should be between 1 and 5")
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product not present")
+    }
+
+    if (product.review?.some(r => r.reviewer.equals(req.user._id))) {
+        throw new ApiError(400, "Rating already exists for this user");
+    }
+    
+    product.review.push({
+        reviewer: req.user._id,
+        rating: rating
+    })
+
+    await product.save()
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Successfully added rating",
+    })
+    
+})
+
+const addComment = asyncHandler(async(req, res) => {
+    const { productId } = req.params
+    const { comment } = req.body
+    if (!productId) {
+        throw new ApiError(400, "Send valid product ID")
+    }
+    if (!comment?.trim()) {
+        throw new ApiError(400, "Comment should be present")
+    }
+
+    const product = await Product.findById(productId)
+    if (!product) {
+        throw new ApiError(400, "Product not present")
+    }
+
+    const review = product.review?.find(r => r.reviewer && r.reviewer.equals(req.user._id))
+    if (!review) {
+        throw new ApiError(400, "Enter the rating first");
+    }
+
+    if(review.comment !== ""){
+        throw new ApiError(400, "Comment already exists for this user")
+    }
+    review.comment = comment
+    await product.save()
+
+    return res
+    .status(200)
+    .json({
+        success: true,
+        message: "Successfully added comment",
+    })
+    
+})
+
 export {
     getRecommendedProducts,
     getProduct,
     searchProducts,
     getProductsByCategories,
-    getCategories
+    getCategories,
+    getComments,
+    getRating,
+    addRating,
+    addComment
 }

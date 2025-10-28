@@ -103,18 +103,16 @@ export default function BuyerNavbar() {
     <nav className="w-full bg-gray-900/80 backdrop-blur-lg border-b border-gray-700 px-6 py-3 flex items-center justify-between shadow-md">
       {/* 🌐 Logo + Links */}
       <div className="flex items-center space-x-2">
-        <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-          SM
-        </div>
-        <h1 className="text-xl font-semibold text-white">ShopMIND</h1>
-        <div className="flex items-center space-x-8 px-5">
-          <a
-            href="../buyer/home"
+        <a
+            href={`${import.meta.env.VITE_FRONTEND_URL}/buyer/home`}
             className="text-gray-300 hover:text-indigo-400 transition duration-200"
           >
-            HOME
-          </a>
-        </div>
+          <div className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            SM
+          </div>
+          <h1 className="text-xl font-semibold text-white">ShopMIND</h1>
+        </a>
+        
       </div>
 
       {/* 🔎 Search Bar */}

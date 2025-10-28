@@ -24,7 +24,7 @@ const ProtectedLayout = () => (
       <div className="group-hover:ml-64 transition-all duration-300 w-full bg-gray-50 min-h-screen ">
         <Outlet />
       </div>
-      <footer className="text-center text-sm bg-gray-100 py-4">
+      <footer className="text-center text-sm text-white bg-black py-4">
         Copyright © 2025 <Link className="text-blue-800" to='/'>ShopMIND</Link>. All rights reserved.
       </footer>
     </>

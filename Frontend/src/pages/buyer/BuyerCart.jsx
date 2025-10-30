@@ -4,6 +4,10 @@ import Loader from "../../components/Loader";
 import { Trash2 } from "lucide-react";
 import axios from "axios";
 
+import { loadStripe } from "@stripe/stripe-js";
+
+const stripePromise = loadStripe("pk_test_YOUR_PUBLISHABLE_KEY");
+
 function BuyerCart() {
   const [loading, setLoading] = useState(false);
   const [cart, setCart] = useState([]);
@@ -80,6 +84,28 @@ function BuyerCart() {
         console.error("Error removing item from cart:", error);
     } finally {
         setLoading(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    setLoading(true);
+    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+    try{
+      const res = await axios.post(
+        `${import.meta.env.VITE_API_URL}/cart/create-checkout-session`,
+        {products: cart},
+        { withCredentials: true }
+      );
+      console.log(res.data);
+      alert("Order placed successfully!");
+      getCartItems();
+    }
+    catch (error) {
+      console.error("Error during checkout:", error);
+      alert("Error placing order. Please try again.");
+    }
+    finally {
+      setLoading(false);
     }
   };
 
@@ -164,7 +190,7 @@ function BuyerCart() {
               <span>₹{total}</span>
             </div>
             <button
-              onClick={() => alert("Proceeding to checkout...")}
+              onClick={() => handleCheckout()}
               className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold transition"
             >
               Checkout

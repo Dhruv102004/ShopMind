@@ -15,6 +15,8 @@ import SellerHome from "./pages/seller/SellerHome";
 import SellerProducts from "./pages/seller/SellerProducts";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BuyerCart from "./pages/buyer/BuyerCart";
+import BuyerPaymentSuccess from "./pages/buyer/BuyerPaymentSuccess";
+import BuyerPaymentFailure from "./pages/buyer/BuyerPaymentFailure";
 
 
 // Protected layout with Navbar
@@ -44,6 +46,9 @@ const appRouter = createBrowserRouter([
       { path: "search-results", element:<BuyerSearchResults /> },
       { path: "products/:id", element: <BuyerProduct /> },
       { path: "cart", element: <BuyerCart /> },
+      { path: "success", element: <BuyerPaymentSuccess /> },
+      { path: "failure", element: <BuyerPaymentFailure /> },
+
       { index: true, element: <Navigate to="home" /> },
     ]
   },

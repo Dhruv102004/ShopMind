@@ -30,7 +30,7 @@ function BuyerCart() {
 
   const increaseQty = async (id, quant) => {
     console.log(id);
-    
+
     setLoading(true);
     try {
       const res = await axios.post(
@@ -72,39 +72,49 @@ function BuyerCart() {
 
   const deleteItem = (id) => {
     setLoading(true);
-    try{
-        const res = axios.post(
-            `${import.meta.env.VITE_API_URL}/cart/remove-item/${id}`,
-            null,
-            { withCredentials: true }
-        );
-        console.log(res.data);
-        getCartItems();
+    try {
+      const res = axios.post(
+        `${import.meta.env.VITE_API_URL}/cart/remove-item/${id}`,
+        null,
+        { withCredentials: true }
+      );
+      console.log(res.data);
+      getCartItems();
     } catch (error) {
-        console.error("Error removing item from cart:", error);
+      console.error("Error removing item from cart:", error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
   const handleCheckout = async () => {
     setLoading(true);
-    const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
-    try{
+    try {
+      // Step 1: Send cart data to backend to create a Checkout Session
       const res = await axios.post(
-        `${import.meta.env.VITE_API_URL}/cart/create-checkout-session`,
-        {products: cart},
+        `${import.meta.env.VITE_API_URL}/cart/buy-cart`,
+        { products: cart },
         { withCredentials: true }
       );
-      console.log(res.data);
-      alert("Order placed successfully!");
+
+      console.log("Checkout session:", res.data);
+
+      // Step 2: Get the checkout URL (NOT sessionId)
+      const checkoutUrl = res.data.url;
+
+      if (!checkoutUrl) {
+        throw new Error("Checkout URL not received from server.");
+      }
+
+      // Step 3: Redirect user to Stripe Checkout page
+      window.location.href = checkoutUrl;
+
+      // (Optional) Clear or refresh cart after redirect
       getCartItems();
-    }
-    catch (error) {
+    } catch (error) {
       console.error("Error during checkout:", error);
       alert("Error placing order. Please try again.");
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   };
@@ -181,23 +191,22 @@ function BuyerCart() {
           {/* Total + Checkout */}
           {cart.length === 0 ? (
             <div className="w-full max-w-2xl mt-6 bg-gray-800/70 p-5 rounded-2xl border border-gray-700 shadow-xl">
-                Your cart is empty.
+              Your cart is empty.
             </div>
           ) : (
             <div className="w-full max-w-2xl mt-6 bg-gray-800/70 p-5 rounded-2xl border border-gray-700 shadow-xl">
-            <div className="flex justify-between text-xl font-semibold mb-4">
-              <span>Total:</span>
-              <span>₹{total}</span>
+              <div className="flex justify-between text-xl font-semibold mb-4">
+                <span>Total:</span>
+                <span>₹{total}</span>
+              </div>
+              <button
+                onClick={() => handleCheckout()}
+                className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold transition"
+              >
+                Checkout
+              </button>
             </div>
-            <button
-              onClick={() => handleCheckout()}
-              className="w-full py-3 bg-indigo-600 hover:bg-indigo-500 rounded-xl text-white font-semibold transition"
-            >
-              Checkout
-            </button>
-          </div>
           )}
-          
         </div>
       )}
     </div>

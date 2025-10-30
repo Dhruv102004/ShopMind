@@ -162,7 +162,8 @@ const buyCart = asyncHandler(async(req, res) => {
     .status(200)
     .json({
         success: true,
-        id:session.id
+        id:session.id,
+        url: session.url
     })
 
 })
